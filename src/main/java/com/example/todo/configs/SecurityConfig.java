@@ -1,5 +1,6 @@
 package com.example.todo.configs;
 
+import com.example.todo.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,14 @@ import java.util.Arrays;
     @EnableGlobalMethodSecurity(prePostEnabled = true)
     public class SecurityConfig {
 
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
         private AuthenticationManager authenticationManager;
+
+        @Autowired
+        private JWTUtil jwtUtil;
 
 
         private static final String[] PUBLIC_MATCHERS = {
@@ -40,6 +48,10 @@ import java.util.Arrays;
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
             http.cors().and().csrf().disable();
+
+            AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+            authenticationManagerBuilder.userDetailsService(this.userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+            this.authenticationManager = authenticationManagerBuilder.build();
 
             http.authorizeRequests()
                     .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
