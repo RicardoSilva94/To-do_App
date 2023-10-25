@@ -1,6 +1,7 @@
 package com.example.todo.exceptions;
 
 
+import com.example.todo.services.exceptions.AuthorizationException;
 import com.example.todo.services.exceptions.DataBindingViolationException;
 import com.example.todo.services.exceptions.ObjectNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
@@ -120,6 +122,32 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             HttpStatus httpstatus,
             WebRequest request) {
         return buildErrorResponse(exception, exception.getMessage(), httpstatus, request);
+    }
+
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleAccessDeniedException(
+            AccessDeniedException accessDeniedException,
+            WebRequest request) {
+        log.error("Authorization error ", accessDeniedException);
+        return buildErrorResponse(
+                accessDeniedException,
+                HttpStatus.FORBIDDEN,
+                request);
+    }
+
+
+    @ExceptionHandler(AuthorizationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleAuthorizationException(
+            AuthorizationException authorizationException,
+            WebRequest request) {
+        log.error("Authorization error ", authorizationException);
+        return buildErrorResponse(
+                authorizationException,
+                HttpStatus.FORBIDDEN,
+                request);
     }
 
 
