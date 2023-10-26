@@ -2,6 +2,8 @@ package com.example.todo.services;
 
 
 import com.example.todo.models.User;
+import com.example.todo.models.dto.UserCreateDTO;
+import com.example.todo.models.dto.UserUpdateDTO;
 import com.example.todo.models.enums.ProfileEnum;
 import com.example.todo.repositories.UserRepository;
 import com.example.todo.security.UserSpringSecurity;
@@ -14,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,5 +78,20 @@ public class UserService {
             return null;
         }
     }
+
+    public User fromDTO(@Valid UserCreateDTO obj) {
+        User user = new User();
+        user.setUsername(obj.getUsername());
+        user.setPassword(obj.getPassword());
+        return user;
+    }
+
+    public User fromDTO(@Valid UserUpdateDTO obj) {
+        User user = new User();
+        user.setId(obj.getId());
+        user.setPassword(obj.getPassword());
+        return user;
+    }
+
 
 }

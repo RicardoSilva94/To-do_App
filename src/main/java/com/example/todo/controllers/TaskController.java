@@ -1,6 +1,7 @@
 package com.example.todo.controllers;
 
 import com.example.todo.models.Task;
+import com.example.todo.models.projection.TaskProjection;
 import com.example.todo.services.TaskService;
 import com.example.todo.services.UserService;
 
@@ -33,8 +34,8 @@ public class TaskController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<Task>> findAllByUser(){
-    List<Task> objs = this.taskService.findALLByUser();
+    public ResponseEntity<List<TaskProjection>> findAllByUser(){
+    List<TaskProjection> objs = this.taskService.findALLByUser();
     return ResponseEntity.ok().body(objs);
 
     }

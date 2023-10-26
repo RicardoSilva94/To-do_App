@@ -1,6 +1,7 @@
 package com.example.todo.repositories;
 
 import com.example.todo.models.Task;
+import com.example.todo.models.projection.TaskProjection;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,7 +13,7 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
 
 
     //dentro do user, seleciona o id
-    List<Task> findByUser_Id(Long id);
+    List<TaskProjection> findByUser_Id(Long id);
 
     //    @Query(value = "SELECT t FROM Task t WHERE t.user.id = :id")
   //  List<Task> findByUser_Id(@Param ("id") Long id);

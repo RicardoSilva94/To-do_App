@@ -20,9 +20,7 @@ import lombok.*;
 @Table(name = Task.TABLE_NAME)
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class Task {
     public static final String TABLE_NAME = "task";
 
@@ -38,8 +36,7 @@ public class Task {
     private User user; //a user has many tasks
 
     @Column (name = "description", length = 255, nullable = false)
-    @NotNull
-    @NotEmpty
+    @NotBlank
     @Size(min =1, max = 255)
     private String description;
 
