@@ -38,6 +38,7 @@ import java.util.Arrays;
         private JWTUtil jwtUtil;
 
 
+    // URLs públicas que não requerem autenticação
         private static final String[] PUBLIC_MATCHERS = {
                 "/"
         };
@@ -46,11 +47,13 @@ import java.util.Arrays;
                 "/login"
         };
 
-        @Bean
+    // Configuração do filtro de segurança HTTP
+    @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
             http.cors().and().csrf().disable();
 
+        // Configura o gestor de autenticação
             AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
             authenticationManagerBuilder.userDetailsService(this.userDetailsService).passwordEncoder(bCryptPasswordEncoder());
             this.authenticationManager = authenticationManagerBuilder.build();
@@ -60,14 +63,17 @@ import java.util.Arrays;
                     .antMatchers(PUBLIC_MATCHERS).permitAll()
                     .anyRequest().authenticated().and().authenticationManager(authenticationManager);
 
+        // Adiciona os filtros personalizados para autenticação e autorização JWT
             http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
             http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, this.jwtUtil, this.userDetailsService));
 
-            http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // Define a política de gestão de sessão como STATELESS (sem estado)
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
             return http.build();
         }
 
+    // Configuração das permissões para CORS
         @Bean
         CorsConfigurationSource corsConfigurationSource() {
             CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
@@ -77,6 +83,7 @@ import java.util.Arrays;
             return source;
         }
 
+    // Configura um codificador de senhas para usar na autenticação
         @Bean
         public BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();

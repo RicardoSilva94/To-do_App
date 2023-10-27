@@ -29,15 +29,16 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
 
-@Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
-@RestControllerAdvice
+@Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER") // Anotação do Lombok que gera automaticamente um logger SLF4J para a classe. O topic especifica o tópico do logger.
+@RestControllerAdvice // Anotação que marca a classe como um controlador de exceções, permitindo o tratamento global de exceções em toda a aplicação.
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler implements AuthenticationFailureHandler {
 
     @Value("${server.error.include-exception}")
     private boolean printStackTrace;
 
    // @Override
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    // Manipulação de erros de validação de argumentos de método
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY) //Anotação que define o código de status HTTP a ser retornado nas respostas de exceção.
     protected ResponseEntity<Object> handleMethodArgumentNotValid (
             MethodArgumentNotValidException methodArgumentNotValidException,
             HttpHeaders headers,
@@ -51,7 +52,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
         return ResponseEntity.unprocessableEntity().body(errorResponse);
     }
 
-    @ExceptionHandler(Exception.class)
+    // Manipulação de exceções não tratadas
+    @ExceptionHandler(Exception.class) //Anotação usada para marcar métodos que tratam exceções específicas. Cada método lida com um tipo específico de exceção.
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleAllUncaughtException(
             Exception exception,
@@ -65,6 +67,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 request);
     }
 
+    // Manipulação de exceções de violação de integridade de dados
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Object> handleDataIntegrityViolationException(
@@ -80,6 +83,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     }
 
 
+    // Manipulação de exceções de violação de restrição de integridade
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<Object> handleConstraintViolationException(
@@ -92,7 +96,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 request);
     }
 
-
+    // Manipulação de exceções de objeto não encontrado
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleObjectNotFoundException(
@@ -105,6 +109,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 request);
     }
 
+    // Manipulação de exceções de violação de vinculação de dados
     @ExceptionHandler(DataBindingViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<Object> handleDataBindingViolationException(
@@ -116,7 +121,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 HttpStatus.CONFLICT,
                 request);
     }
-
+//  este método reutiliza o segundo método para criar a resposta de erro, adicionando a mensagem da exceção. Sobrecarga de métodos
     private ResponseEntity<Object> buildErrorResponse(
             Exception exception,
             HttpStatus httpstatus,
@@ -124,7 +129,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
         return buildErrorResponse(exception, exception.getMessage(), httpstatus, request);
     }
 
-
+    // Manipulação de exceções de acesso negado
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Object> handleAccessDeniedException(
@@ -137,7 +142,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
                 request);
     }
 
-
+    // Manipulação de exceções de autorização
     @ExceptionHandler(AuthorizationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<Object> handleAuthorizationException(
@@ -164,7 +169,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
 
-    @Override
+    // Manipulação de falhas de autenticação
+    @Override //Indica que um método substitui um método na superclasse.
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         Integer status = HttpStatus.UNAUTHORIZED.value();
         response.setStatus(status);

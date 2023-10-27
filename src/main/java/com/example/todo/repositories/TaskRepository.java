@@ -22,3 +22,4 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
   //  List<Task> findByUser_Id(@Param ("id") Long id);
 
 }
+//Repository são DAO's (Data access object)
