@@ -14,3 +14,5 @@ public class DataBindingViolationException extends DataIntegrityViolationExcepti
 
 
     }
+
+    //  é uma classe que representa uma exceção personalizada relacionada com violações de integridade de dados no sistema.

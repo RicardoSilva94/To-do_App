@@ -18,16 +18,19 @@ public class UserSpringSecurity implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities; // Collection é uma interface que representa uma coleção de objetos.
+    //GrantedAuthority é uma interface do Spring Security que representa uma autoridade associada a um user
 
+    // Construtor que inicializa um objeto UserSpringSecurity
     public UserSpringSecurity(Long id, String username, String password, Set<ProfileEnum> profileEnums) {
         this.id = id;
         this.username = username;
         this.password = password;
+        // Mapeia os ProfileEnum para objetos SimpleGrantedAuthority e coleta numa lista de autoridades
         this.authorities = profileEnums.stream().map(x -> new SimpleGrantedAuthority(x.getDescription())).collect(Collectors.toList());
     }
 
-
+    // Métodos da interface UserDetails (implementados para o Spring Security)
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -48,6 +51,7 @@ public class UserSpringSecurity implements UserDetails {
         return true;
     }
 
+    // Verifica se o user possui um determinado perfil
     public boolean hasRole(ProfileEnum profileEnum){
     return getAuthorities().contains(new SimpleGrantedAuthority(profileEnum.getDescription()));
     }

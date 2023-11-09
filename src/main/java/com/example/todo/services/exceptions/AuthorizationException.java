@@ -15,3 +15,4 @@ public class AuthorizationException extends AccessDeniedException {
 
 }
 
+// é uma classe que representa uma exceção personalizada relacionada com erros de autorização no sistema.

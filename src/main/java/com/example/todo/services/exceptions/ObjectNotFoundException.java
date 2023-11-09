@@ -13,3 +13,4 @@ public class ObjectNotFoundException extends EntityNotFoundException {
         super(message);
     }
 }
+// classe que é usada para criar exceções personalizadas para casos em que um objeto específico não pôde ser encontrado no sistema

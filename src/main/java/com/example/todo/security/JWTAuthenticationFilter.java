@@ -28,15 +28,17 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.jwtUtil = jwtUtil;
     }
 
+    // método chamado quando o user faz uma tentativa de autenticação
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
         try {
-         User userCredentials = new ObjectMapper().readValue(request.getInputStream(), User.class);
-
+            // Converte os dados de entrada num objeto User
+            User userCredentials = new ObjectMapper().readValue(request.getInputStream(), User.class);
+            // Cria um token de autenticação com as credenciais do utilizador
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userCredentials.getUsername(), userCredentials.getPassword(),
             new ArrayList<>());
-
+            // Realiza a autenticação usando o gestor de autenticação
             Authentication authentication = this.authenticationManager.authenticate(authToken);
             return authentication;
         } catch (IOException e) {
@@ -44,12 +46,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
+    // Executado quando a autenticação é bem-sucedida
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authentication)
             throws IOException, ServletException {
+        // Obtém os detalhes do user autenticado
         UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
         String username = userSpringSecurity.getUsername();
+        // Gera um token JWT com base no nome de utilizador
         String token = this.jwtUtil.generateToken(username);
+        // Adiciona o token JWT no cabeçalho da resposta HTTP
         response.addHeader("Authorization", "Bearer " + token);
         response.addHeader("access-control-expose-headers", "Authorization");
     }
