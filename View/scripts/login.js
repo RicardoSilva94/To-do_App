@@ -5,36 +5,40 @@ async function login() {
 
     console.log(username, password);
 
-    // Envia uma requisição POST para o servidor para autenticar o user
-    const response = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: new Headers({
-            "Content-Type": "application/json; charset=utf8",
-            Accept: "application/json",
-        }),
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        }),
-    });
+    try {
+        const response = await fetch("http://localhost:8080/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
+        });
 
-    // Obtém o token de autorização da resposta e armazena-o no armazenamento local (localStorage).
-    let key = "Authorization";
-    let token = response.headers.get(key);
-    window.localStorage.setItem(key, token);
+        if (!response.ok) {
+            throw new Error("Login failed");
+        }
 
-    // Verifica se a resposta da requisição foi bem-sucedida (status 2xx).
-    if (response.ok) {
-        // Exibe um toast de sucesso usando a função showToast com o ID "#okToast".
+        // Verifica se o cabeçalho contém o token de autorização antes de tentar acessá-lo
+        let key = "Authorization";
+        if (response.headers.has(key)) {
+            let token = response.headers.get(key);
+            window.localStorage.setItem(key, token);
+        }
+
         showToast("#okToast");
-    } else {
-        // Exibe um toast de erro usando a função showToast com o ID "#errorToast".
+
+        // Redireciona o usuário para a página "/view/index.html" após 2 segundos.
+        window.setTimeout(function () {
+            window.location = "/To-do/view/index.html";
+        }, 2000);
+    } catch (error) {
         showToast("#errorToast");
+        console.error("Error:", error);
     }
-    // Redireciona o user para a página "/view/index.html" após 2 segundos.
-    window.setTimeout(function () {
-        window.location = "/view/index.html";
-    }, 2000);
 }
 
 function showToast(id) {
